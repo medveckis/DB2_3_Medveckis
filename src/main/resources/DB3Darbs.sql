@@ -85,18 +85,21 @@ CREATE TABLE medical_bills_history
     DELETED_DATE date
 );
 
-CREATE OR REPLACE TRIGGER trg_after_delete_skolnieks
-AFTER DELETE
+create or replace
+trigger trg_after_delete_skolnieks
+  BEFORE DELETE
   ON skolnieki
   FOR EACH ROW
-DECLARE
-username varchar2(10);
+  DECLARE
+    username varchar2(50);
+    pragma autonomous_transaction;
 
-BEGIN
+  BEGIN
 
-  -- current login user, in this example, system
-  SELECT user INTO username FROM dual;
-	
-  DELETE FROM adreses a WHERE a.adrese_id = deref(:old.skolnieks.dzives_vieta).adrese_id;
-  
-END;
+    -- current login user, in this example, system
+    SELECT user INTO username FROM dual;
+
+    DELETE FROM adreses a WHERE :old.skolnieks.dzives_vieta IS NOT NULL AND
+                                a.adrese_id = deref(:old.skolnieks.dzives_vieta).adrese_id;
+    COMMIT;
+  END;
