@@ -7,7 +7,7 @@ import com.medveckis.model.Skolnieks;
 
 import java.util.Scanner;
 
-public class DefaultClientUtils {
+public class ClientUtils {
 
     private static final String AUTHOR_INFO = "Autors: Maksims Medveckis 171RDB030 1.grupa 3.kurss";
     private static final String PROGRAM_DESCRIPTION = "Šī programma palīdzes jums strādāt ar Oracle datubāzi.";
@@ -111,5 +111,10 @@ public class DefaultClientUtils {
         skolnieks.setKlaseId(Integer.parseInt(sc.nextLine()));
 
         return skolnieks;
+    }
+
+    public static int getIdFromInput(Scanner sc) {
+        System.out.println("Skolnieks id: ");
+        return Integer.parseInt(sc.nextLine());
     }
 }

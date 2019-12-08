@@ -26,10 +26,16 @@ public class DatabaseUtils {
             "SELECT REF(A) INTO ats FROM adreses A WHERE A.adrese_id = ?;\n" +
             "UPDATE skolnieki S SET S.skolnieks.dzives_vieta = ats WHERE S.skolnieks_id = ?;\n" +
             "END;";
+    private static final String DELETE_SKOLNIEKS = "DELETE FROM skolnieki WHERE skolnieks_id=?";
+
+
+    private static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(connectionName, username, password);
+    }
 
     public static List<Skolnieks> getAllRowsFromSKOLNIEKI() {
         List<Skolnieks> skolnieksList = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(connectionName, username, password)) {
+        try (Connection conn = getConnection()) {
             Statement stmt = conn.createStatement();
             ResultSet resultSet = stmt.executeQuery(GET_ALL_SKOLNIEKS);
             while (resultSet.next()) {
@@ -56,7 +62,7 @@ public class DatabaseUtils {
     public static boolean insertIntoSkolniekiTable(Skolnieks skolnieks) {
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(connectionName, username, password);
+            conn = getConnection();
             conn.setAutoCommit(false);
             PreparedStatement stmtSkolnieks = conn.prepareStatement(INSERT_INTO_SKOLNIEKS);
 
@@ -114,6 +120,18 @@ public class DatabaseUtils {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static boolean deleteSkolnieks(int id) {
+        try (Connection conn = getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(DELETE_SKOLNIEKS);
+            stmt.setBigDecimal(1, new BigDecimal(id));
+            int res = stmt.executeUpdate();
+            return res > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
